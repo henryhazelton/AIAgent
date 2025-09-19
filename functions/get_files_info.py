@@ -14,10 +14,15 @@ def get_files_info(working_directory, directory="."):
     if os.path.isdir(absolute_path_target_directory) == False:
         return f'Error: "{directory}" is not a directory'
     
-    if os.path.isfile(full_path):
-        file_parts = [full_path.split()]
-        file = file_parts[-1]
-    
-    string_ReadMe = f'- README.md: file_size={os.path.getsize(file)}, is_dir={os.path.isdir(file)}'
-    string_src = f'- src: file_size={os.path.getsize(file)}, is_dir={os.path.isdir(file)}'
-    string_packageJson = f'- package.json: file_size={os.path.getsize(file)}, is_dir={os.path.isdir(file)}'
+    contents_of_directory = os.listdir(absolute_path_target_directory)
+
+    list_of_contents_of_directory = []
+
+    for item in contents_of_directory:
+        # Append the item name to end of target path for full path of item in directory
+        full_path = os.path.join(absolute_path_target_directory, item)
+        is_dir = os.path.isdir(full_path)
+        size = os.path.getsize(full_path)
+        string_info = f"- {item}: file_size={size} bytes, is_dir={is_dir}"
+        list_of_contents_of_directory.append(string_info)
+    return "\n".join(list_of_contents_of_directory)
