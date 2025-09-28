@@ -13,8 +13,6 @@ def get_files_info(working_directory, directory="."):
     
     if os.path.isdir(absolute_path_target_directory) == False:
         return f'Error: "{directory}" is not a directory'
-    
-
 
     try: 
         contents_of_directory = os.listdir(absolute_path_target_directory)
