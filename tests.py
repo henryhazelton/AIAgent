@@ -1,21 +1,31 @@
-import unittest
-from calculator import *
-
-from functions import get_files_info
+from functions.get_files_info import get_files_info
 
 
-class GetFilesInfoTests(unittest.TestCase):
-    def test_current_dir(self):
-            get_files_info("calculator", ".")
-            pass
-    def test(self):
-        get_files_info("calculator", "pkg")
-        pass
+if __name__ == "__main__":
+    # 1) current directory
+    print("Result for current directory:")
+    result = get_files_info("calculator", ".")
+    # print each line, indented by one space
+    for line in result.splitlines():
+        print(f" {line}")
 
-    def test2(self):
-        get_files_info("calculator", "/bin")
-        pass
+    # 2) pkg directory
+    print("Result for 'pkg' directory:")
+    result = get_files_info("calculator", "pkg")
 
-    def test3(self):
-        get_files_info("calculator", "../")
-        pass
+    for line in result.splitlines():
+        print(f" {line}")
+
+    # 3) bin directory
+    print("Result for '/bin' directory:")
+    result = get_files_info("calculator", "/bin")
+
+    for line in result.splitlines():
+        print(f" {line}")
+
+    # 4) ../ directory
+    print("Result for '../' directory:")
+    result = get_files_info("calculator", "../")
+
+    for line in result.splitlines():
+        print(f" {line}")
