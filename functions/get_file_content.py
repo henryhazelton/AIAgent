@@ -22,14 +22,16 @@ def get_file_content(working_directory, file_path):
     # Find lenth of file
     file_length = len(file_path)
 
-    
     # Read the file
     with open(file_path, "r") as f:
-            file_content_string = f.read(config.character_limit)
+        file_content_string = f.read(config.character_limit)
 
-    # Check file length and return message if truncated
-    if file_length > config.character_limit:
-        file_content_string_truncated = file_content_string + f"[...File '{file_path}' truncated at 10000 characters]"
-        return file_content_string_truncated
-    else:
-         return file_content_string
+    try:
+        # Check file length and return message if truncated
+        if file_length > config.character_limit:
+            file_content_string_truncated = file_content_string + f"[...File '{file_path}' truncated at 10000 characters]"
+            return file_content_string_truncated
+        else:
+            return file_content_string
+    except Exception as e:
+        return f"Error: {e}"
