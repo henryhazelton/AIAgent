@@ -18,13 +18,13 @@ def get_file_content(working_directory, file_path):
     # Validate if file path is a file
     if os.path.isfile(absolute_path_target_directory) == False:
         return f'Error: "{file_path}" is not a file'
-    
-    # Find lenth of file
-    file_length = len(file_path)
 
     # Read the file
-    with open(file_path, "r") as f:
+    with open(absolute_path_target_directory, "r") as f:
         file_content_string = f.read(config.character_limit)
+
+    # Find lenth of file
+    file_length = len(file_content_string)
 
     try:
         # Check file length and return message if truncated
