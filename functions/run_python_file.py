@@ -1,5 +1,6 @@
 # Function to allow LLM to run a python file
 import os
+import subprocess
 
 def run_python_file(working_directory, file_path, args=[]):
 
@@ -21,5 +22,18 @@ def run_python_file(working_directory, file_path, args=[]):
         return f'Error: File "{file_path}" not found.'
     
     # Check file ends in .py
-    if not os.path.dirname(file_path).endswith(".py"):
+    if not file_path.endswith(".py"):
+        print(file_path)
         return f'Error: "{file_path}" is not a Python file.'
+    
+    # make the llm run
+    subprocess.run(timeout=30, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=file_path, args=args)
+    result = subprocess.CompletedProcess
+
+    if result:
+        standard_output = f"STDOUT: {result.stdout}"
+        standard_error = f"STDERR: {result.stderr}"
+        exit_code = f"Process exited with {result.check_returncode()}"
+
+        return standard_output, standard_error, exit_code
+    
