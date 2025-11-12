@@ -2,8 +2,8 @@
 import os
 import subprocess
 
-def run_python_file(working_directory, file_path, args=[]):
 
+def run_python_file(working_directory, file_path, args=[]):
     # Find absolute path of current working directory
     path_working_directory = os.path.abspath(working_directory)
 
@@ -16,18 +16,24 @@ def run_python_file(working_directory, file_path, args=[]):
         != path_working_directory
     ):
         return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
-    
+
     # Validate if file path exists
     if not os.path.dirname(file_path):
         return f'Error: File "{file_path}" not found.'
-    
+
     # Check file ends in .py
     if not file_path.endswith(".py"):
         print(file_path)
         return f'Error: "{file_path}" is not a Python file.'
-    
+
     # make the llm run
-    subprocess.run(timeout=30, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=file_path, args=args)
+    subprocess.run(
+        timeout=30,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        cwd=file_path,
+        args=args,
+    )
     result = subprocess.CompletedProcess
 
     if result:
@@ -36,4 +42,3 @@ def run_python_file(working_directory, file_path, args=[]):
         exit_code = f"Process exited with {result.check_returncode()}"
 
         return standard_output, standard_error, exit_code
-    
