@@ -16,3 +16,5 @@ pyproject.toml
 
 # Ruff file
 .ruff_cache
+
+settings.json
