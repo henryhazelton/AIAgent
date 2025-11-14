@@ -11,10 +11,7 @@ def run_python_file(working_directory, file_path, args=[]):
     file_path = os.path.abspath(os.path.join(working_directory, file_path))
 
     # Validate if full path is within the working directory boundaries
-    if (
-        os.path.commonpath([working_directory, file_path])
-        != working_directory
-    ):
+    if os.path.commonpath([working_directory, file_path]) != working_directory:
         return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
 
     # Validate if file path exists
@@ -34,7 +31,8 @@ def run_python_file(working_directory, file_path, args=[]):
         cmd.extend(args)
 
     # make the llm run
-    result = subprocess.run(cmd, timeout=30, capture_output=True, cwd=working_directory, text=True)
-    
+    result = subprocess.run(
+        cmd, timeout=30, capture_output=True, cwd=working_directory, text=True
+    )
 
     print(result)
