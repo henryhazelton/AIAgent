@@ -31,21 +31,27 @@ def run_python_file(working_directory, file_path, args=[]):
         cmd.extend(args)
 
     # make the llm run
-    result = subprocess.run(
+    output = subprocess.run(
         cmd, timeout=30, capture_output=True, cwd=working_directory, text=True
     )
 
     try:
-        if result.stderr is None:
-            return f"No {result.stderr} given"
+        if output.stderr is None:
+            return f"No {output.stderr} given"
 
-        if result.stdout is None:
-            return f"No {result.stdout} given"
+        if output.stdout is None:
+            return f"No {output.stdout} given"
+        
+        if output is None:
+            return f"No output produced."
 
-        if result.check_returncode != 0:
-            return f"Process exited with code {result.returncode}"
+        if output.returncode != 0:
+            return_code_message =  f"Process exited with code {output.returncode}"
+            return f"STDOUT: {output.stdout} STDERR: {output.stderr}" + return_code_message
+        
+        
 
-        return f"STDOUT: {result.stdout}. STDERR: {result.stderr}."
+        return f"STDOUT: {output.stdout} STDERR: {output.stderr}" 
 
     except Exception as e:
-        return f"Error: {e}"
+        return f"Error: executing Python file: {e}"
