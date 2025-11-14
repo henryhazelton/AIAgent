@@ -2,11 +2,10 @@ from functions.run_python_file import run_python_file
 
 
 if __name__ == "__main__":
-    # Run 1 
+    # Run 1
     print("Run 1")
     result = run_python_file("calculator", "main.py")
     print(result)
-
 
     # Run 2
     print("Run 2")
