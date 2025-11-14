@@ -3,7 +3,13 @@ from functions.run_python_file import run_python_file
 
 
 if __name__ == "__main__":
-    print("Testing is not a python file")
+    print("Testing check 'is not a python file'")
+
+    result = run_python_file("calculator", "lorem.txt")
+
+    print(result)
+
+    print("Testing 'file does not exist'")
 
     result = run_python_file("calculator", "lorem.py")
 
