@@ -35,4 +35,17 @@ def run_python_file(working_directory, file_path, args=[]):
         cmd, timeout=30, capture_output=True, cwd=working_directory, text=True
     )
 
-    print(result)
+    try:
+        if result.stderr is None:
+            return f"No {result.stderr} given"
+
+        if result.stdout is None:
+            return f"No {result.stdout} given"
+
+        if result.check_returncode != 0:
+            return f"Process exited with code {result.returncode}"
+
+        return f"STDOUT: {result.stdout}. STDERR: {result.stderr}."
+
+    except Exception as e:
+        return f"Error: {e}"
