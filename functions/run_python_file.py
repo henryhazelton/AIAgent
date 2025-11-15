@@ -4,6 +4,9 @@ import subprocess
 
 
 def run_python_file(working_directory, file_path, args=[]):
+    # Store file name
+    file_name = file_path
+
     # Find absolute path of current working directory
     working_directory = os.path.abspath(working_directory)
 
@@ -12,15 +15,15 @@ def run_python_file(working_directory, file_path, args=[]):
 
     # Validate if full path is within the working directory boundaries
     if os.path.commonpath([working_directory, file_path]) != working_directory:
-        return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
+        return f'Error: Cannot execute "{file_name}" as it is outside the permitted working directory'
 
-    # Validate if file path exists
+    # Validate if file exists
     if not os.path.exists(file_path):
-        return f'Error: File "{file_path}" not found.'
+        return f'Error: File "{file_name}" not found.'
 
     # Check file ends in .py
     if not file_path.endswith(".py"):
-        return f'Error: "{file_path}" is not a Python file.'
+        return f'Error: "{file_name}" is not a Python file.'
 
     # Ensure args is a list of strings
     args = [] if args is None else [str(a) for a in args]
@@ -30,26 +33,17 @@ def run_python_file(working_directory, file_path, args=[]):
     if args:
         cmd.extend(args)
 
-    # make the llm run
+    # make the LLM run
     output = subprocess.run(
         cmd, timeout=30, capture_output=True, cwd=working_directory, text=True
     )
 
     try:
-        if output.stderr is None:
-            return f"No {output.stderr} given"
-
-        if output.stdout is None:
-            return f"No {output.stdout} given"
-
-        if output is None:
-            return "No output produced."
-
         if output.returncode != 0:
-            return_code_message = f"Process exited with code {output.returncode}"
-            return (
-                f"STDOUT: {output.stdout} STDERR: {output.stderr}" + return_code_message
-            )
+            return f"STDOUT: {output.stdout} STDERR: {output.stderr} Process exited with code {output.returncode}"
+
+        if output.stderr == "" and output.stdout == "":
+            return "No output produced."
 
         return f"STDOUT: {output.stdout} STDERR: {output.stderr}"
 
