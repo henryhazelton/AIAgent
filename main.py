@@ -6,9 +6,10 @@ from google import genai
 from google.genai import types
 
 
+
 def generate_content(client, messages):
     response = client.models.generate_content(
-        model="gemini-2.0-flash-001",
+        model="gemini-2.5-flash",
         contents=messages,
         config=types.GenerateContentConfig(system_instruction=system_prompt),
     )
