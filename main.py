@@ -27,7 +27,7 @@ def main():
     if len(sys.argv) >= 2:
         user_prompt = sys.argv[1]
     else:
-        user_prompt = "how are you?"
+        user_prompt = "Let the user know you would like to assist them!"
 
     messages = [
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
