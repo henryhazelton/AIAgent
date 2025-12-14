@@ -13,37 +13,43 @@ def generate_content(client, messages):
         contents=messages,
         config=types.GenerateContentConfig(system_instruction=system_prompt),
     )
-    generated_text, prompt_tokens, response_tokens = (
-        response.text,
-        f"Prompt tokens: {response.usage_metadata.prompt_token_count}",
-        f"Response tokens: {response.usage_metadata.candidates_token_count}",
-    )
-    # prompt_tokens = f"Prompt tokens: {response.usage_metadata.prompt_token_count}"
-    # response_tokens = f"Response tokens: {response.usage_metadata.candidates_token_count}"
-    return generated_text, prompt_tokens, response_tokens
+    return response
 
 
 def main():
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
 
-    user_prompt = sys.argv[1]
+    # if len(sys.argv) < 2:
+    #     print("Must input a prompt for the program to run")
+    #     sys.exit(1)
+
+    if len(sys.argv) >= 2:
+        user_prompt = sys.argv[1]
+    else:
+        user_prompt = "how are you?"
+
     messages = [
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
 
     client = genai.Client(api_key=api_key)
 
-    generated_text, prompt_tokens, response_tokens = generate_content(client, messages)
+    response = generate_content(client, messages)
 
-    if len(sys.argv) < 2:
-        print("Must input a prompt for the program to run")
-        sys.exit(1)
-    elif len(sys.argv) > 2 and sys.argv[2] == "--verbose":
+    generated_text, prompt_tokens, response_tokens = (
+        response.text,
+        f"Prompt tokens: {response.usage_metadata.prompt_token_count}",
+        f"Response tokens: {response.usage_metadata.candidates_token_count}",
+    )
+
+    if len(sys.argv) > 2 and sys.argv[2] == "--verbose":
         print(f"User prompt: {user_prompt}")
-        print(f"Prompt tokens: {prompt_tokens}")
-        print(f"Response tokens: {response_tokens}")
+        print(prompt_tokens)
+        print(response_tokens)
     else:
+        print(prompt_tokens)
+        print(response_tokens)
         print(generated_text)
 
 
