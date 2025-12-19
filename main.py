@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from functions.get_files_info import schema_get_files_info
+from call_function import available_functions
 
 from prompts import system_prompt
 
@@ -26,10 +27,6 @@ def generate_content(client, messages):
 def main():
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
-
-    # if len(sys.argv) < 2:
-    #     print("Must input a prompt for the program to run")
-    #     sys.exit(1)
 
     if len(sys.argv) >= 2:
         user_prompt = sys.argv[1]
