@@ -26,6 +26,7 @@ def main():
     # Create an argument parser
     parser = argparse.ArgumentParser(description="Chatbot")
     parser.add_argument("user_prompt", type=str, help="User prompt")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()  # Now we can access `args.user_prompt`
 
     load_dotenv()
@@ -55,13 +56,11 @@ def main():
         for function in function_available:
             print(f"Calling function: {function.name}({function.args})")
 
-    if len(sys.argv) > 2 and sys.argv[2] == "--verbose":
+    if args.verbose:
         print(f"User prompt: {args.user_prompt}")
         print(prompt_tokens)
         print(response_tokens)
     else:
-        print(prompt_tokens)
-        print(response_tokens)
         print(generated_text)
 
 
