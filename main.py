@@ -1,6 +1,5 @@
 import argparse
 import os
-import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -42,26 +41,19 @@ def main():
         types.Content(role="user", parts=[types.Part(text=args.user_prompt)]),
     ]
 
+    # Generate the response object
     response = generate_content(client, messages)
-
-    generated_text, prompt_tokens, response_tokens = (
-        response.text,
-        f"Prompt tokens: {response.usage_metadata.prompt_token_count}",
-        f"Response tokens: {response.usage_metadata.candidates_token_count}",
-    )
-
-    function_available = response.function_calls
-
-    if function_available:
-        for function in function_available:
-            print(f"Calling function: {function.name}({function.args})")
 
     if args.verbose:
         print(f"User prompt: {args.user_prompt}")
-        print(prompt_tokens)
-        print(response_tokens)
+        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+
+    if response.function_calls:
+        for function in response.function_calls:
+            print(f"Calling function: {function.name}({function.args})")
     else:
-        print(generated_text)
+        print(response.text)
 
 
 if __name__ == "__main__":
