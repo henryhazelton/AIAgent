@@ -1,16 +1,12 @@
+import argparse
 import os
 import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from functions.get_files_info import schema_get_files_info
 from call_function import available_functions
 
 from prompts import system_prompt
-
-available_functions = types.Tool(
-    function_declarations=[schema_get_files_info],
-)
 
 
 def generate_content(client, messages):
@@ -21,23 +17,29 @@ def generate_content(client, messages):
             tools=[available_functions], system_instruction=system_prompt
         ),
     )
+    if not response.usage_metadata:
+        raise RuntimeError("Gemini API response appears to be malformed")
     return response
 
 
 def main():
+    # Create an argument parser
+    parser = argparse.ArgumentParser(description="Chatbot")
+    parser.add_argument("user_prompt", type=str, help="User prompt")
+    args = parser.parse_args()  # Now we can access `args.user_prompt`
+
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY environment variable not set")
 
-    if len(sys.argv) >= 2:
-        user_prompt = sys.argv[1]
-    else:
-        user_prompt = "Let the user know you would like to assist them!"
-
-    messages = [
-        types.Content(role="user", parts=[types.Part(text=user_prompt)]),
-    ]
-
+    # Create a client
     client = genai.Client(api_key=api_key)
+
+    # Store the messages in a list to reference
+    messages = [
+        types.Content(role="user", parts=[types.Part(text=args.user_prompt)]),
+    ]
 
     response = generate_content(client, messages)
 
@@ -54,7 +56,7 @@ def main():
             print(f"Calling function: {function.name}({function.args})")
 
     if len(sys.argv) > 2 and sys.argv[2] == "--verbose":
-        print(f"User prompt: {user_prompt}")
+        print(f"User prompt: {args.user_prompt}")
         print(prompt_tokens)
         print(response_tokens)
     else:
