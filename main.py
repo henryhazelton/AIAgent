@@ -3,15 +3,22 @@ import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from functions.get_files_info import schema_get_files_info
 
 from prompts import system_prompt
+
+available_functions = types.Tool(
+    function_declarations=[schema_get_files_info],
+)
 
 
 def generate_content(client, messages):
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=messages,
-        config=types.GenerateContentConfig(system_instruction=system_prompt),
+        config=types.GenerateContentConfig(
+            tools=[available_functions], system_instruction=system_prompt
+        ),
     )
     return response
 
@@ -42,6 +49,12 @@ def main():
         f"Prompt tokens: {response.usage_metadata.prompt_token_count}",
         f"Response tokens: {response.usage_metadata.candidates_token_count}",
     )
+
+    function_available = response.function_calls
+
+    if function_available:
+        for function in function_available:
+            print(f"Calling function: {function.name}({function.args})")
 
     if len(sys.argv) > 2 and sys.argv[2] == "--verbose":
         print(f"User prompt: {user_prompt}")
