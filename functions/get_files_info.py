@@ -17,27 +17,27 @@ schema_get_files_info = types.FunctionDeclaration(
 
 
 def get_files_info(working_directory, directory="."):
-    # Find absolute path of working directory
-    absolute_path_working_directory = os.path.abspath(working_directory)
-
-    # Find absolute path of target directory
-    absolute_path_target_directory = os.path.abspath(
-        os.path.join(working_directory, directory)
-    )
-
-    # Validate if full path is within the working directory boundaries
-    if (
-        os.path.commonpath(
-            [absolute_path_working_directory, absolute_path_target_directory]
-        )
-        != absolute_path_working_directory
-    ):
-        return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
-
-    if not os.path.isdir(absolute_path_target_directory):
-        return f'Error: "{directory}" is not a directory'
-
     try:
+        # Find absolute path of working directory
+        absolute_path_working_directory = os.path.abspath(working_directory)
+
+        # Find absolute path of target directory
+        absolute_path_target_directory = os.path.abspath(
+            os.path.join(working_directory, directory)
+        )
+
+        # Validate if full path is within the working directory boundaries
+        if (
+            os.path.commonpath(
+                [absolute_path_working_directory, absolute_path_target_directory]
+            )
+            != absolute_path_working_directory
+        ):
+            return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
+
+        if not os.path.isdir(absolute_path_target_directory):
+            return f'Error: "{directory}" is not a directory'
+
         contents_of_directory = os.listdir(absolute_path_target_directory)
         list_of_contents_of_directory = []
 
@@ -50,4 +50,4 @@ def get_files_info(working_directory, directory="."):
             list_of_contents_of_directory.append(string_info)
         return "\n".join(list_of_contents_of_directory)
     except Exception as e:
-        return f"Error: {e}"
+        return f"Error listing files: {e}"
