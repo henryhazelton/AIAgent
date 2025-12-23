@@ -41,7 +41,11 @@ def main():
         types.Content(role="user", parts=[types.Part(text=args.user_prompt)]),
     ]
 
+    # Run response generation in a loop until response is finished
+
+    # Loop counter adds a limit to the response calls the agent can make
     loop_counter = 0
+
     while loop_counter < 20:
         # Generate the response object
         response = generate_content(client, messages)
