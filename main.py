@@ -41,34 +41,52 @@ def main():
         types.Content(role="user", parts=[types.Part(text=args.user_prompt)]),
     ]
 
-    # Generate the response object
-    response = generate_content(client, messages)
 
-    if args.verbose:
-        print(f"User prompt: {args.user_prompt}")
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+    loop_counter = 0
+    while loop_counter < 20:
 
-    # A list to store the result of the function calls
-    function_responses = []
+        # Generate the response object
+        response = generate_content(client, messages)
+        loop_counter += 1
+        # Candidate is a response variation, where response.candidates is a list of response variations
+        if response.candidates:
+            for candidate in response.candidates:
+                messages.append(candidate.content)
+        else:
+            raise Exception("Response contains no variations")
+        
+        if args.verbose:
+            print(f"User prompt: {args.user_prompt}")
+            print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+            print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
-    if response.function_calls:
-        for function_call in response.function_calls:
-            result = call_function(function_call, args.verbose)
+        # A list to store the result of the function calls
+        function_responses = []
 
-            if (
-                not result.parts
-                or not result.parts[0].function_response
-                or not result.parts[0].function_response.response
-            ):
-                raise RuntimeError(f"Empty function response for {function_call.name}")
-            else:
-                function_responses.append(result.parts[0])
+        if response.function_calls:
+            for function_call in response.function_calls:
+                result = call_function(function_call, args.verbose)
 
-            if args.verbose:
-                print(f"-> {result.parts[0].function_response.response}")
-    else:
-        print(response.text)
+                if (
+                    not result.parts
+                    or not result.parts[0].function_response
+                    or not result.parts[0].function_response.response
+                ):
+                    raise RuntimeError(f"Empty function response for {function_call.name}")
+                else:
+                    function_responses.append(result.parts[0])
+
+                if args.verbose:
+                    print(f"-> {result.parts[0].function_response.response}")
+
+            # Take the list of function responses and assign them the role of user to give back to the model
+            messages.append(types.Content(parts=function_responses, role='user'))
+        
+        
+        else:
+            print(response.text)
+            break
+            
 
 
 if __name__ == "__main__":
