@@ -41,10 +41,8 @@ def main():
         types.Content(role="user", parts=[types.Part(text=args.user_prompt)]),
     ]
 
-
     loop_counter = 0
     while loop_counter < 20:
-
         # Generate the response object
         response = generate_content(client, messages)
         loop_counter += 1
@@ -54,7 +52,7 @@ def main():
                 messages.append(candidate.content)
         else:
             raise Exception("Response contains no variations")
-        
+
         if args.verbose:
             print(f"User prompt: {args.user_prompt}")
             print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
@@ -72,7 +70,9 @@ def main():
                     or not result.parts[0].function_response
                     or not result.parts[0].function_response.response
                 ):
-                    raise RuntimeError(f"Empty function response for {function_call.name}")
+                    raise RuntimeError(
+                        f"Empty function response for {function_call.name}"
+                    )
                 else:
                     function_responses.append(result.parts[0])
 
@@ -80,13 +80,11 @@ def main():
                     print(f"-> {result.parts[0].function_response.response}")
 
             # Take the list of function responses and assign them the role of user to give back to the model
-            messages.append(types.Content(parts=function_responses, role='user'))
-        
-        
+            messages.append(types.Content(parts=function_responses, role="user"))
+
         else:
             print(response.text)
             break
-            
 
 
 if __name__ == "__main__":
